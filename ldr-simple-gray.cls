@@ -109,21 +109,17 @@
 
 
 
-% 为了兼容，我把这里注释了，建议自己安装并设置好看的字体
-% % 设置中文字体
-% \setCJKmainfont{KaiTi}
-% \setCJKsansfont{KaiTi}
-% \setCJKmonofont{KaiTi}
+% 设置中文字体
+\setCJKmainfont{宋体}
+\setCJKsansfont{宋体}
+\setCJKmonofont{宋体}
 
 % % 设置英文字体
-% % https://fonts.google.com/specimen/Andika+New+Basic
-% \setmainfont{Andika New Basic}
-% \setsansfont{Andika New Basic}
+\setmainfont{Georgia}
+\setsansfont{Georgia}
 
-% % 代码字体
-% % https://fonts.google.com/specimen/Ubuntu+Mono
-% \setmonofont{Ubuntu Mono}
-
+% 代码字体
+\setmonofont{Consolas}
 
 
 %------------------------------------------------------------
