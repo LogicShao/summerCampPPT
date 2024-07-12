@@ -2,10 +2,10 @@
 
 \usepackage{verbatim}
 
-\title{plz, listen carefully >\_<}
+\title{字符串哈希\&字典树}
 \subtitle{QwQ}
 
-\author{Fancy QwQ}
+\author{邵逸帆}
 \institute[] {
   23电信基地班\\
   兰州大学算法与程序设计集训队
@@ -17,56 +17,60 @@
 \begin{document}
   \frame{\titlepage} % 首页
 
-  \section{第一部分}
-  \begin{frame}
-    \frametitle{第一部分}
-    \begin{itemize}
-      \item 1 first item
-      \item 2 second item
-      \item 3 third item
-    \end{itemize}
-  \end{frame}
-
-  \begin{frame}[fragile]{代码示例}
-    \begin{verbatim}
-#include <iostream>
-using namespace std;
-int main() {
-  cout << "Hello, World!" << endl;
-  return 0;
-}
-    \end{verbatim}
-  \end{frame}
-
-  \section{第二部分}
-  \begin{frame}{block}
-    \begin{block}{block}
-      block
+  \section{字符串基础}
+  \begin{frame}{char in C/C++}
+    \begin{block}{字符类型}
+      \begin{itemize}
+        \item char类型
+        \item char[]类型(char数组)
+        \item char*类型(char指针)
+      \end{itemize}
     \end{block}
-    \begin{exampleblock}{exampleblock}
-      exampleblock
-    \end{exampleblock}
-    \begin{alertblock}{alertblock}
-      alertblock
-    \end{alertblock}
+    
+    \begin{block}{字符串字面量}
+      eg. \texttt{"Hello, World!"}
+      \begin{itemize}
+        \item type: char[14] in C, const char[14] in C++
+        \item size: 14
+      \end{itemize}
+
+      Warning: 不建议使用\texttt{char* str = "Hello, World!";}这样的代码，因为对于其的修改会导致未定义行为(因为你在修改只读内存)。
+    \end{block}
+
+    我们可以使用字符数组来存储字符串，这很直观。
   \end{frame}
 
-  \begin{frame}{math}
-    \begin{equation}
-      \begin{aligned}
-        \nabla \times \mathbf{B} - \frac{1}{c} \frac{\partial \mathbf{E}}{\partial t} &= \frac{4\pi}{c} \mathbf{J} \\
-        \nabla \cdot \mathbf{E} &= 4\pi \rho
-      \end{aligned}
-    \end{equation}
+  \begin{frame}{std::string in C++}
+    \texttt{std::string}与\texttt{std::vector<char>}非常相似，只不过前者提供了更多的字符串操作函数。当然，相较于\texttt{char[]}更有优势。
+
+    \begin{block}{std::string}
+      \begin{itemize}
+        \item append() \& operator+=: 字符串拼接
+        \item find(): 查找字符串中的某个子串
+        \item substr(): 返回字符串的子串
+        \item operator== \& < \& > etc.: 字符串比较
+      \end{itemize}
+    \end{block}
+
+    诸如\texttt{std::to\_string(),std::stoi(),isdigit()}等函数有时候会帮助你更优雅地处理字符串。
   \end{frame}
 
-  \section{第三部分}
-  \begin{frame}{图片}
-    \begin{figure}
-      \centering
-      \includegraphics[width=0.5\textwidth]{./figures/lzu_logo.png}
-      \caption{兰州大学校徽}
-    \end{figure}
+  \begin{frame}{What is String}
+    字符串定义于字符集之上。一个建立了全序关系的集合 $\Sigma$就可以作为一个字符集，其中的元素称为字符。字符串是字符的有限序列。
+    \newline\newline
+    字符串的长度是指字符串中字符的个数。字符串的长度可以为0。
+    \newline\newline
+    之后的内容涉及到子串、子序列、前缀、后缀等概念，请注意区分。
+  \end{frame}
+
+  \section{字符串哈希}
+  \begin{frame}{什么是哈希}
+    pass
+  \end{frame}
+
+  \section{字典树}
+  \begin{frame}{什么是字典树}
+    pass
   \end{frame}
 
   \begin{frame} % 结束页
