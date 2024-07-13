@@ -34,12 +34,11 @@
         \item size: 14
       \end{itemize}
 
-      Warning: 不建议使用\texttt{char* str = "Hello, World!";}这样的代码，因为对于其的修改会导致未定义行为(因为你在修改只读内存)。
+      Warning: 考虑这样的代码\texttt{char* str = "Hello, World!";}那么对于字符串的修改会导致未定义行为(因为你在修改只读内存)。
     \end{block}
 
     我们可以使用字符数组来存储字符串，这很直观。
   \end{frame}
-
   \begin{frame}{std::string in C++}
     \texttt{std::string}与\texttt{std::vector<char>}非常相似，只不过前者提供了更多的字符串操作函数。当然，相较于\texttt{char[]}更有优势。
 
@@ -56,16 +55,51 @@
   \end{frame}
 
   \begin{frame}{What is String}
-    字符串定义于字符集之上。一个建立了全序关系的集合 $\Sigma$就可以作为一个字符集，其中的元素称为字符。字符串是字符的有限序列。
-    \newline\newline
-    字符串的长度是指字符串中字符的个数。字符串的长度可以为0。
-    \newline\newline
-    之后的内容涉及到子串、子序列、前缀、后缀等概念，请注意区分。
+    字符串是字符的有限序列。对于字符串s:
+    \begin{itemize}
+      \item 字符串的长度: 字符串中字符的个数，记为$|s|$。特别地，空串的长度为0。
+      \item 子串: $s[i,j]$表示从第$i$个字符到第$j$个字符的子串。
+      \item 子序列: $s[i_1,i_2,\cdots,i_k]$表示从第$i_1$个字符到第$i_k$个字符的子序列。
+      \item 前缀: $s[1,i]$表示从第一个字符到第$i$个字符的前缀。
+      \item 后缀: $s[i,|s|]$表示从第$i$个字符到最后一个字符的后缀。
+      \item 回文: $s$是回文当且仅当$s$与$s^R$相等，其中$s^R$表示$s$的逆序。
+      \item 字典序: 字符串的字典序是指字符串在字典中的顺序，其中空串是字典序最小的字符串。
+    \end{itemize}
   \end{frame}
 
+  \begin{frame}{Input \& Output}
+    \begin{block}{字符串的读入}
+      \begin{itemize}
+        \item C style: scanf,getchar,gets(C11后被弃用)
+        \item C++ style: std::cin,std::getline
+      \end{itemize}
+    \end{block}
+    对于单一的一个字符，也建议使用字符数组或者std::string读入(因为字符串的读入会跳过空白符)。
+    \begin{block}{输出}
+      \begin{itemize}
+        \item C style: printf,putchar,puts
+        \item C++ style: std::cout,std::endl,std::cerr
+      \end{itemize}
+    \end{block}
+    std::cerr是无缓冲的，而std::cout是行缓冲的。善用这一特性，对调试有很大帮助。
+  \end{frame}
+  
   \section{字符串哈希}
-  \begin{frame}{什么是哈希}
-    pass
+  \begin{frame}{What is Hash}
+    哈希是一种将任意长度的输入通过散列函数变换为固定长度输出的方法。哈希函数的输出通常称为哈希值。
+    \begin{block}{哈希函数}
+      \begin{itemize}
+        \item 一致性: 对于相同的输入，哈希函数应该返回相同的哈希值。
+        \item 高效性: 计算哈希值的时间应该尽可能短。
+        \item 雪崩效应: 输入的微小变化应该导致输出的巨大变化。
+        \item 抗冲突性: 不同的输入应该尽可能产生不同的哈希值。
+      \end{itemize}
+    \end{block}
+    简单来说，我们让一个非常大的值域映射到一个比较小的值域，尽可能降低冲突的概率，这就是哈希。
+  \end{frame}
+
+  \begin{frame}{Hash on String}
+    简单来说，哈希可以帮助我们快速判断两个数据是否相等。这一思想亦可用于字符串。
   \end{frame}
 
   \section{字典树}
