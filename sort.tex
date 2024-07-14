@@ -1,11 +1,15 @@
 \documentclass{ldr-simple-gray}
 
 \usepackage{verbatim}
+\usepackage{algorithm}
+\usepackage{algorithmic}
+\usepackage[utf8]{inputenc}
+\usepackage{biblatex}
 
 \title{排序}
 \subtitle{快速排序\&归并排序\&堆排序etc.}
 
-\author{邵逸帆}
+\author{邵逸帆$q\omega q$}
 \institute[] {
   23电信基地班\\
   兰州大学算法与程序设计集训队
@@ -15,58 +19,174 @@
 \titlegraphic{\includegraphics[height=1.5cm]{./figures/lzu_logo.png} \includegraphics[height=1.5cm]{./images/LZUPAT.png}}
 
 \begin{document}
-  \frame{\titlepage} % 首页
+  \frame{\titlepage}
 
-  \section{第一部分}
-  \begin{frame}
-    \frametitle{第一部分}
+  \begin{frame}{Intro}
     \begin{itemize}
-      \item 1 first item
-      \item 2 second item
-      \item 3 third item
+      \item 排序是将一组数据按照某种顺序重新排列的过程。
+      \item 稳定性: 若两个相等的元素在排序前后的相对位置不变，则称排序算法是稳定的。
+      \item 时间复杂度：简单计算复杂度一般是通过统计“简单操作”的次数来实现的。基于比较的排序算法的时间复杂度的下界是$O(n\log n)$。
+      \item 空间复杂度：排序算法的空间复杂度是指除了输入数据外，算法运行时所需的额外空间。
     \end{itemize}
   \end{frame}
 
-  \begin{frame}[fragile]{代码示例}
+  \begin{frame}{Review}
+    % 插入表格
+    \begin{table}
+      \centering
+      \begin{tabular}{|c|c|c|c|c|}
+        \hline
+        八大排序 & 时间复杂度 & 空间复杂度 & 稳定性 \\
+        \hline
+        冒泡排序 & $O(n^2)$ & $O(1)$ & 稳定 \\
+        选择排序 & $O(n^2)$ & $O(1)$ & 不稳定 \\
+        插入排序 & $O(n^2)$ & $O(1)$ & 稳定 \\
+        希尔排序 & $O(n^{\frac{3}{2}})$ & $O(1)$ & 不稳定 \\
+        归并排序 & $O(n\log n)$ & $O(n)$ & 稳定 \\
+        快速排序 & $O(n\log n)$ & $O(1)$ & 不稳定 \\
+        堆排序 & $O(n\log n)$ & $O(1)$ & 不稳定 \\
+        计数排序 & $O(n+k)$ & $O(k)$ & 稳定 \\
+        \hline
+      \end{tabular}
+    \end{table}
+  \end{frame}
+
+  \begin{frame}{Divide and Conquer}
+      分治即“分而治之”，就是把一个复杂的问题分成两个或更多的相同或相似的子问题，直到最后子问题可以简单的直接求解，原问题的解即子问题的解的合并。\\
+      分治主要包含三个步骤：
+      \begin{itemize}
+        \item 分解：将原问题分解成一系列子问题。
+        \item 解决：递归地解决这些子问题。
+        \item 合并：将子问题的解合并成原问题的解。
+      \end{itemize}
+      简单来说就是递归前要做什么(分解)，递归后要做什么(合并)。\\
+      归并排序和快速排序都是基于分治思想的排序算法。
+    \end{frame}
+
+  \begin{frame}{Quick Sort}
+    \begin{block}{快速排序}
+      选择一个基准元素pivot，将数组分成两部分，左边的元素都小于等于pivot，右边的元素都大于等于pivot。递归地对左右两部分做快速排序。
+    \end{block}
+    \begin{block}{划分}
+      \begin{itemize}
+        \item 选择一个基准元素pivot。
+        \item 用两个指针$p1,p2$分别指向数组的起始位置和结束位置。
+        \item 从$p1$开始向右找到第一个大于等于pivot的元素，从$p2$开始向左找到第一个小于等于pivot的元素，交换这两个元素。
+        \item 重复上述过程直到$p1$和$p2$相遇。
+        \item 将pivot与$p1$指向的元素交换。
+      \end{itemize}
+    \end{block}
+  \end{frame}
+
+  \begin{frame}[fragile]{Quick Sort}
     \begin{verbatim}
-#include <iostream>
-using namespace std;
-int main() {
-  cout << "Hello, World!" << endl;
-  return 0;
+void quick_sort(int l, int r) {
+  if (l >= r) return;
+  int i = l, j = r, x = a[rand() % (r - l + 1) + l];
+  while (i <= j) {
+    do i++; while (a[i] < x);
+    do j--; while (a[j] > x);
+    if (i < j) swap(a[i], a[j]);
+  }
+  quick_sort(l, j), quick_sort(i, r);
 }
     \end{verbatim}
   \end{frame}
 
-  \section{第二部分}
-  \begin{frame}{block}
-    \begin{block}{block}
-      block
+  \begin{frame}{Merge Sort}
+    \begin{block}{归并排序}
+      \begin{itemize}
+        \item 分解：将数组分成两半。
+        \item 解决：递归地对两半进行归并排序。
+        \item 合并：将两个有序数组合并成一个有序数组。
+      \end{itemize}
     \end{block}
-    \begin{exampleblock}{exampleblock}
-      exampleblock
-    \end{exampleblock}
-    \begin{alertblock}{alertblock}
-      alertblock
-    \end{alertblock}
+
+    \begin{block}{合并有序数组}
+      \begin{itemize}
+        \item 申请一个临时数组tmp，大小为$n$。
+        \item 用两个指针$p1,p2$分别指向两个有序数组的起始位置。
+        \item 比较$p1,p2$指向的元素，将较小的元素放入tmp中。
+        \item 重复上述过程直到两个数组中的元素全部放入tmp中。
+        \item 将tmp中的元素复制回原数组。
+      \end{itemize}
+    \end{block}
   \end{frame}
 
-  \begin{frame}{math}
-    \begin{equation}
-      \begin{aligned}
-        \nabla \times \mathbf{B} - \frac{1}{c} \frac{\partial \mathbf{E}}{\partial t} &= \frac{4\pi}{c} \mathbf{J} \\
-        \nabla \cdot \mathbf{E} &= 4\pi \rho
-      \end{aligned}
-    \end{equation}
+  \begin{frame}[fragile]{Merge Sort}
+    \begin{verbatim}
+void merge_sort(int l, int r) {
+  if (l >= r) return;
+  int mid = (l + r) >> 1;
+  merge_sort(l, mid), merge_sort(mid + 1, r);
+  int i = l, j = mid + 1, k = l;
+  while (i <= mid && j <= r) {
+    if (a[i] <= a[j]) tmp[k++] = a[i++];
+    else tmp[k++] = a[j++];
+  }
+  while (i <= mid) tmp[k++] = a[i++];
+  while (j <= r) tmp[k++] = a[j++];
+  for (int i = l; i <= r; i++) a[i] = tmp[i];
+}
+    \end{verbatim}
   \end{frame}
 
-  \section{第三部分}
-  \begin{frame}{图片}
-    \begin{figure}
-      \centering
-      \includegraphics[width=0.5\textwidth]{./figures/lzu_logo.png}
-      \caption{兰州大学校徽}
-    \end{figure}
+  \begin{frame}{Heap Sort}
+    \begin{block}{堆排序}
+      \begin{itemize}
+        \item 建堆：将数组构建成一个大顶堆。
+        \item 排序：将堆顶元素与最后一个元素交换，然后调整堆。
+      \end{itemize}
+    \end{block}
+    \begin{block}{调整堆}
+      \begin{itemize}
+        \item 从根节点开始比较左右子节点的值，将较大的子节点与根节点交换。
+        \item 递归地对交换后的子节点进行调整。
+      \end{itemize}
+    \end{block}
+    堆排序本质上是一种选择排序。
+  \end{frame}
+
+  \begin{frame}{伪代码}
+    \begin{algorithm}[H]
+      \caption{Heap Sort}
+      \begin{algorithmic}[1]
+        \STATE{BuildHeap()}
+        \FOR{$i = n$ to $2$}
+          \STATE{Swap(a[1], a[i])}
+          \STATE{AdjustHeap(1, i - 1)}
+        \ENDFOR
+      \end{algorithmic}
+    \end{algorithm}
+
+    \begin{algorithm}[H]
+      \caption{Build Heap}
+      \begin{algorithmic}[1]
+        \FOR{$i = n / 2$ to $1$}
+          \STATE{AdjustHeap(i, n)}
+        \ENDFOR
+      \end{algorithmic}
+    \end{algorithm}
+  \end{frame}
+
+  \begin{frame}{伪代码}
+    \begin{algorithm}[H]
+      \caption{Adjust Heap}
+      \begin{algorithmic}[1]
+        \STATE{$t = a[i]$}
+        \FOR{$j = 2 \times i$ to $n$}
+          \IF{$j < n$ and $a[j] < a[j + 1]$}
+            \STATE{$j++$}
+          \ENDIF
+          \IF{$t \geq a[j]$}
+            \STATE{break}
+          \ENDIF
+          \STATE{$a[i] = a[j]$}
+          \STATE{$i = j$}
+        \ENDFOR
+        \STATE{$a[i] = t$}
+      \end{algorithmic}
+    \end{algorithm}
   \end{frame}
 
   \begin{frame} % 结束页
