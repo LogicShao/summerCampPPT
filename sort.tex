@@ -3,6 +3,7 @@
 \usepackage{verbatim}
 \usepackage{algorithm}
 \usepackage{algorithmic}
+\usepackage{hyperref}
 \usepackage[utf8]{inputenc}
 \usepackage{biblatex}
 
@@ -31,6 +32,17 @@
   \end{frame}
 
   \begin{frame}{Review}
+    通常排序算法可以分为三类：
+    \begin{enumerate}
+      \item 冒泡排序、选择排序、插入排序
+      \item 快速排序、归并排序、堆排序
+      \item 计数排序、桶排序、基数排序
+    \end{enumerate}
+
+    其中快速排序由于其高效性被广泛使用,而归并排序由于其稳定性被用于外部排序。
+  \end{frame}
+
+  \begin{frame}{Comparison}
     % 插入表格
     \begin{table}
       \centering
@@ -52,14 +64,19 @@
   \end{frame}
 
   \begin{frame}{Divide and Conquer}
-      分治即“分而治之”，就是把一个复杂的问题分成两个或更多的相同或相似的子问题，直到最后子问题可以简单的直接求解，原问题的解即子问题的解的合并。\\
+      分治即“分而治之”，就是把一个复杂的问题分成两个或更多的相同或相似的子问题，直到最后子问题可以简单的直接求解，原问题的解即子问题的解的合并。
+      \\
+
       分治主要包含三个步骤：
       \begin{itemize}
         \item 分解：将原问题分解成一系列子问题。
         \item 解决：递归地解决这些子问题。
         \item 合并：将子问题的解合并成原问题的解。
       \end{itemize}
-      简单来说就是递归前要做什么(分解)，递归后要做什么(合并)。\\
+
+      简单来说就是递归前要做什么(分解)，递归后要做什么(合并)。
+      \\
+
       归并排序和快速排序都是基于分治思想的排序算法。
     \end{frame}
 
@@ -82,15 +99,26 @@
     \begin{verbatim}
 void quick_sort(int l, int r) {
   if (l >= r) return;
-  int i = l, j = r, x = a[rand() % (r - l + 1) + l];
-  while (i <= j) {
+  int i = l - 1, j = r + 1, x = a[rand() % (r - l + 1) + l];
+  while (i < j) {
     do i++; while (a[i] < x);
     do j--; while (a[j] > x);
-    if (i < j) swap(a[i], a[j]);
+    if (i < j) std::swap(a[i], a[j]);
   }
-  quick_sort(l, j), quick_sort(i, r);
+  quick_sort(l, j), quick_sort(j + 1, r);
 }
     \end{verbatim}
+  \end{frame}
+
+  \begin{frame}{第K大数-快速选择算法}
+    利用快速排序的思想，我们可以在$O(n)$的时间复杂度内找到数组中的第$k$大数(或者第$k$小数)。
+    \begin{itemize}
+      \item 当我们划分完成的时候，基准的位置已经确定，假设其位置为i，那么基准就是第i大的数(假设我们是降序排序的)
+      \item 若$i==k$,基准即为答案
+      \item 若$i<k$,容易看出答案在划分的右区间
+      \item 若$i>k$,则答案在左区间
+    \end{itemize}
+    在最终求得答案时，我们并没有对所有的数组进行排序，而是利用了每一次划分的信息。
   \end{frame}
 
   \begin{frame}{Merge Sort}
@@ -113,11 +141,27 @@ void quick_sort(int l, int r) {
     \end{block}
   \end{frame}
 
+  \begin{frame}[fragile]{逆序对}
+    满足$i<j$且$a[i]>a[j]$的数对称为逆序对。在每次合并的时候，我们考虑左区间元素大于右区间元素的情况，此时左区间的元素个数即为逆序对的个数。
+    \begin{verbatim}
+void merge(int l, int r) {
+  /*...*/ int i = l, j = mid + 1;
+  for (int k = l; k <= r; k++) {
+    if (j > r || (i <= mid && a[i] <= a[j])) {
+      tmp[k] = a[i++];
+    } else {
+      // 此时a[i~mid]都大于a[j]
+      tmp[k] = a[j++], ans += mid - i + 1;
+    }
+  } /*...*/
+}\end{verbatim}
+  \end{frame}
+
   \begin{frame}[fragile]{Merge Sort}
     \begin{verbatim}
 void merge_sort(int l, int r) {
   if (l >= r) return;
-  int mid = (l + r) >> 1;
+  int mid = (l + r) / 2;
   merge_sort(l, mid), merge_sort(mid + 1, r);
   int i = l, j = mid + 1, k = l;
   while (i <= mid && j <= r) {
@@ -131,10 +175,20 @@ void merge_sort(int l, int r) {
     \end{verbatim}
   \end{frame}
 
+  \begin{frame}{Heap}
+    我们可以使用堆来优化选择排序，这样选出一个最值的时间复杂度可以降低到$O(\log n)$。
+    \begin{itemize}
+      \item 堆是一种数据结构。对于任意一个节点，其父节点的值大于等于(或小于等于)其子节点的值。
+      \item 堆可以用数组来表示，对于节点$i$，其左儿子为$2i$，右儿子为$2i+1$，父节点为$i/2$。
+      \item 堆分为大顶堆和小顶堆。
+      \item 堆是一棵完全二叉树，每一个节点的子树都是一个堆。
+    \end{itemize}
+  \end{frame}
+
   \begin{frame}{Heap Sort}
     \begin{block}{堆排序}
       \begin{itemize}
-        \item 建堆：将数组构建成一个大顶堆。
+        \item 建堆：将数组构建成一个大顶堆。可以证明其为$O(n)$。
         \item 排序：将堆顶元素与最后一个元素交换，然后调整堆。
       \end{itemize}
     \end{block}
@@ -144,7 +198,7 @@ void merge_sort(int l, int r) {
         \item 递归地对交换后的子节点进行调整。
       \end{itemize}
     \end{block}
-    堆排序本质上是一种选择排序。
+    堆排序本质上是一种选择排序。从调整堆的操作中可以看出，堆排序涉及到较远项的交换，从而是不稳定的。
   \end{frame}
 
   \begin{frame}{伪代码}
@@ -162,8 +216,9 @@ void merge_sort(int l, int r) {
     \begin{algorithm}[H]
       \caption{Build Heap}
       \begin{algorithmic}[1]
-        \FOR{$i = n / 2$ to $1$}
-          \STATE{AdjustHeap(i, n)}
+        % 添加伪代码的注释
+        \FOR[where $i$ is non-leaf node]{$i = n / 2$ to $1$}
+          \STATE{AdjustHeap(i, n)}\COMMENT{调整i为根的堆}
         \ENDFOR
       \end{algorithmic}
     \end{algorithm}
@@ -173,20 +228,117 @@ void merge_sort(int l, int r) {
     \begin{algorithm}[H]
       \caption{Adjust Heap}
       \begin{algorithmic}[1]
-        \STATE{$t = a[i]$}
-        \FOR{$j = 2 \times i$ to $n$}
-          \IF{$j < n$ and $a[j] < a[j + 1]$}
+        \STATE{$t = a[i]$}\COMMENT{下沉i节点}
+        \FOR[从左儿子到最后一个节点]{$j = 2 \times i$ to $n$}
+          \IF[选择左右儿子中的较大的]{$j < n$ and $a[j] < a[j + 1]$}
             \STATE{$j++$}
           \ENDIF
-          \IF{$t \geq a[j]$}
+          \IF[满足堆的性质就退出]{$t \geq a[j]$}
             \STATE{break}
           \ENDIF
-          \STATE{$a[i] = a[j]$}
+          \STATE{$a[i] = a[j]$}\COMMENT{上浮j节点}
           \STATE{$i = j$}
         \ENDFOR
         \STATE{$a[i] = t$}
       \end{algorithmic}
     \end{algorithm}
+  \end{frame}
+
+  \begin{frame}{std::sort in STL}
+    \begin{block}{void sort(RandomIt first, RandomIt last, Compare comp);}
+      这是std::sort的函数原型。其中RandomIt是一个随机访问迭代器，排序区间是左闭右开的；Compare是一个可调用对象，用于比较待排序的元素，默认为std::less<T>()。
+    \end{block}
+
+    \begin{block}{STL中的std::sort函数是非常高效的}
+      \begin{itemize}
+        \item C++ STL中的sort函数是基于快速排序的。
+        \item 对于小规模数据，sort函数会使用插入排序。
+        \item 对于大规模数据，sort函数会使用快速排序。
+        \item 对于近乎有序的数据，sort函数会使用三路快速排序。
+      \end{itemize}
+    \end{block}
+  \end{frame}
+
+  \begin{frame}[fragile]{Example}
+    \begin{block}{例如}
+      \begin{verbatim}
+int a[1000000], n; // 对于数组a进行排序
+std::sort(a, a + n); // 默认升序排序
+std::sort(a, a + n, std::greater<int>()); // 降序排序
+
+std::vector<int> v; // 对于vector v进行排序
+std::sort(v.begin(), v.end());\end{verbatim}
+    \end{block}
+    对于std::pair和std::tuple这些已经实现比较的类型也可以直接排序。
+    \newline
+
+    当然，STL还提供了诸如 std::stable\_sort, std::partial\_sort, std::nth\_element, std::is\_sorted等函数。
+  \end{frame}
+
+  \begin{frame}[fragile]{自定义类型排序}
+    对于自定义类型，我们可以重载其比较运算符，或者使用lambda表达式来进行排序。
+    \begin{block}{重载operator<}
+      \begin{verbatim}
+bool operator<(const Node &rhs) const {
+  return x < rhs.x || (x == rhs.x && y < rhs.y);
+}\end{verbatim}
+    \end{block}
+    \begin{block}{lambda表达式}
+      \begin{verbatim}
+std::sort(v.begin(), v.end(),
+  [](const Node &a, const Node &b) {
+  return a.x < b.x || (a.x == b.x && a.y < b.y);
+});\end{verbatim}
+    \end{block}
+    
+    当然一些可调用对象也是可以的，通常它们被称为仿函数(functor)。
+  \end{frame}
+
+  \begin{frame}{严格弱序}
+    在这里我们需要注意的是：我们自定义的比较函数需要满足``严格弱序"，这是 \href{https://zh.cppreference.com/w/cpp/named_req/Compare}{STL} 所要求的。\newline
+
+    严格弱序的定义如下：
+    \begin{itemize}
+      \item 反自反性：$!comp(a, a)$
+      \item 反对称性：$comp(a, b) \Rightarrow !comp(b, a)$
+      \item 传递性：$comp(a, b) \&\& comp(b, c) \Rightarrow comp(a, c)$
+    \end{itemize}
+    定义equiv(a, b)为!comp(a, b) \&\& !comp(b, a)，则要满足自反性、对称性、传递性。\newline
+
+    假如我们定义<为<=，那么我们就不满足严格弱序的定义，使用std::sort会出现未定义行为，可能会Runtime Error。
+  \end{frame}
+
+  \begin{frame}[fragile]{去重}
+    对于一个有序的数组，我们很容易对其进行去重。\\当然STL也提供了对应的函数。
+
+    \begin{block}{去重}
+      \begin{verbatim}
+std::vector<int> v;
+std::sort(v.begin(), v.end());
+v.erase(std::unique(v.begin(), v.end()), v.end());\end{verbatim}
+        这样就完成了对于数组v的去重操作。
+    \end{block}
+  \end{frame}
+
+  \begin{frame}{离散化}
+    离散化是一种将数据映射到连续的整数区间的方法。在一些问题中，我们需要将一些离散的数据映射到连续的整数区间，以便于我们进行操作。
+    \begin{itemize}
+      \item 离散化的过程是将所有的数据放入一个数组中，然后对数组进行排序。
+      \item 然后对于每一个数据，我们可以通过二分查找找到其在排序后的数组中的位置。
+      \item 通过这种方法，我们可以将数据映射到$[1,n]$的整数区间。
+    \end{itemize}
+  \end{frame}
+
+  \begin{frame}[fragile]{离散化}
+    \begin{verbatim}
+void discrete() {
+  std::sort(a + 1, a + n + 1);
+  m = std::unique(a + 1, a + n + 1) - a - 1;
+}
+int query(int x) {
+  return std::lower_bound(a + 1, a + m + 1, x) - a;
+}
+    \end{verbatim}
   \end{frame}
 
   \begin{frame} % 结束页
