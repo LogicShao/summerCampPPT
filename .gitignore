@@ -4,6 +4,10 @@ test*
 
 tempCodeRunnerFile.py
 
+## self added
+*.in
+*.zip
+*.txt
 
 ## Core latex/pdflatex auxiliary files:
 *.aux
