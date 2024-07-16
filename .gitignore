@@ -5,6 +5,7 @@ test*
 tempCodeRunnerFile.py
 
 ## self added
+/code
 *.in
 *.zip
 *.txt

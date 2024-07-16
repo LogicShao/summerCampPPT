@@ -22,6 +22,7 @@
 \begin{document}
   \frame{\titlepage}
 
+  \section{引入}
   \begin{frame}{Intro}
     \begin{itemize}
       \item 排序是将一组数据按照某种顺序重新排列的过程。
@@ -31,15 +32,18 @@
     \end{itemize}
   \end{frame}
 
-  \begin{frame}{Review}
-    通常排序算法可以分为三类：
-    \begin{enumerate}
-      \item 冒泡排序、选择排序、插入排序
-      \item 快速排序、归并排序、堆排序
-      \item 计数排序、桶排序、基数排序
-    \end{enumerate}
+  \begin{frame}{Overview}
+    \begin{block}{通常排序算法可以分为三类：}
+      \begin{enumerate}
+        \item 冒泡排序、选择排序、插入排序
+        \item 快速排序、归并排序、堆排序
+        \item 计数排序、桶排序、基数排序
+      \end{enumerate}
+    \end{block}
 
-    其中快速排序由于其高效性被广泛使用,而归并排序由于其稳定性被用于外部排序。
+    前两类是基于比较的排序，第一类的时间复杂度是$O(n^2)$，第二类的时间复杂度是$O(n\log n)$。其中快速排序由于其高效性被广泛使用,而归并排序由于其稳定性被用于外部排序。\newline
+
+    第三类换了一种思路，不直接比较元素的大小，而是对被排序的元素采取按位划分、分类映射的方法，可以实现线性时间复杂度。\newline
   \end{frame}
 
   \begin{frame}{Comparison}
@@ -64,22 +68,21 @@
   \end{frame}
 
   \begin{frame}{Divide and Conquer}
-      分治即“分而治之”，就是把一个复杂的问题分成两个或更多的相同或相似的子问题，直到最后子问题可以简单的直接求解，原问题的解即子问题的解的合并。
-      \\
+    分治即“分而治之”，就是把一个复杂的问题分成两个或更多的相同或相似的子问题，直到最后子问题可以简单的直接求解，原问题的解即子问题的解的合并。\newline
 
-      分治主要包含三个步骤：
-      \begin{itemize}
-        \item 分解：将原问题分解成一系列子问题。
-        \item 解决：递归地解决这些子问题。
-        \item 合并：将子问题的解合并成原问题的解。
-      \end{itemize}
+    分治主要包含三个步骤：
+    \begin{itemize}
+      \item 分解：将原问题分解成一系列子问题。
+      \item 解决：递归地解决这些子问题。
+      \item 合并：将子问题的解合并成原问题的解。
+    \end{itemize}
 
-      简单来说就是递归前要做什么(分解)，递归后要做什么(合并)。
-      \\
+    简单来说就是递归前要做什么(分解)，递归后要做什么(合并)。\newline
 
-      归并排序和快速排序都是基于分治思想的排序算法。
-    \end{frame}
+    归并排序和快速排序都是基于分治思想的排序算法。
+  \end{frame}
 
+  \section{快速排序}
   \begin{frame}{Quick Sort}
     \begin{block}{快速排序}
       选择一个基准元素pivot，将数组分成两部分，左边的元素都小于等于pivot，右边的元素都大于等于pivot。递归地对左右两部分做快速排序。
@@ -100,28 +103,35 @@
 void quick_sort(int l, int r) {
   if (l >= r) return;
   int i = l - 1, j = r + 1;
-  int x = a[rand() % (r - l + 1) + l];
+  int x = a[rand() % (r - l + 1) + l]; // 随机选择基准
   while (i < j) {
     do i++; while (a[i] < x);
     do j--; while (a[j] > x);
-    if (i < j) std::swap(a[i], a[j]);
-  }
+    if (i < j) swap(a[i], a[j]);
+  } // 此时a[l~j]都小于等于x,a[j+1~r]都大于等于x
   quick_sort(l, j), quick_sort(j + 1, r);
-}
-    \end{verbatim}
+}\end{verbatim}
+  \end{frame}
+
+  \begin{frame}{Quick Sort}
+    快速排序是一种原地排序算法，不需要额外的空间。但是快速排序是不稳定的，因为在划分的过程中可能会改变相同元素的相对位置。\newline
+
+    快速排序的平均时间复杂度是$O(n\log n)$，最坏情况下的时间复杂度是$O(n^2)$，最坏情况发生在数组已经有序的情况下。\newline
+
+    为了避免最坏情况的发生，我们可以随机选择基准元素，或者选择中位数作为基准元素。
   \end{frame}
 
   \begin{frame}{第K大数-快速选择算法}
     利用快速排序的思想，我们可以在$O(n)$的时间复杂度内找到数组中的第$k$大数(或者第$k$小数)。
     \begin{itemize}
-      \item 当我们划分完成的时候，基准的位置已经确定，假设其位置为i，那么基准就是第i大的数(假设我们是降序排序的)
-      \item 若$i==k$,基准即为答案
-      \item 若$i<k$,容易看出答案在划分的右区间
-      \item 若$i>k$,则答案在左区间
+      \item 我们选择一个基准元素$x$，将数组分成两部分，左边的元素都小于等于$x$，右边的元素都大于等于$x$。
+      \item 如果左边的元素个数大于等于$k$，那么我们在左边找第$k$大数。
+      \item 否则我们在右边找第$k-num$大数，其中$num$是左边元素的个数。
     \end{itemize}
     在最终求得答案时，我们并没有对所有的数组进行排序，而是利用了每一次划分的信息。
   \end{frame}
 
+  \section{归并排序}
   \begin{frame}{Merge Sort}
     \begin{block}{归并排序}
       \begin{itemize}
@@ -142,22 +152,6 @@ void quick_sort(int l, int r) {
     \end{block}
   \end{frame}
 
-  \begin{frame}[fragile]{逆序对}
-    满足$i<j$且$a[i]>a[j]$的数对称为逆序对。在每次合并的时候，我们考虑左区间元素大于右区间元素的情况，此时左区间的元素个数即为逆序对的个数。
-    \begin{verbatim}
-void merge(int l, int r) {
-  /*...*/ int i = l, j = mid + 1;
-  for (int k = l; k <= r; k++) {
-    if (j > r || (i <= mid && a[i] <= a[j])) {
-      tmp[k] = a[i++];
-    } else {
-      // 此时a[i~mid]都大于a[j]
-      tmp[k] = a[j++], ans += mid - i + 1;
-    }
-  } /*...*/
-}\end{verbatim}
-  \end{frame}
-
   \begin{frame}[fragile]{Merge Sort}
     \begin{verbatim}
 void merge_sort(int l, int r) {
@@ -176,12 +170,37 @@ void merge_sort(int l, int r) {
     \end{verbatim}
   \end{frame}
 
-  \begin{frame}{Heap}
+  \begin{frame}{Merge Sort}
+    归并排序是一种稳定的排序算法，时间复杂度是$O(n\log n)$，空间复杂度是$O(n)$。\newline
+
+    归并排序的缺点是需要额外的空间，但是归并排序是一种天然适合外部排序的算法。\newline
+
+    归并排序的优点是可以很容易地将其改造为并行算法，可以利用多核CPU或者多机器进行并行计算。
+  \end{frame}
+
+  \begin{frame}[fragile]{逆序对}
+    满足$i<j$且$a[i]>a[j]$的数对称为逆序对。在每次合并的时候，我们考虑左区间元素大于右区间元素的情况，此时左区间的剩余元素个数即为逆序对的个数。
+    \begin{verbatim}
+void merge(int l, int r) {
+  /*...*/ int i = l, j = mid + 1;
+  for (int k = l; k <= r; k++) {
+    if (j > r || (i <= mid && a[i] <= a[j])) {
+      tmp[k] = a[i++];
+    } else {
+      // 此时a[i~mid]都大于a[j]
+      tmp[k] = a[j++], ans += mid - i + 1;
+    }
+  } /*...*/
+}\end{verbatim}
+  \end{frame}
+
+  \section{堆排序}
+  \begin{frame}{Heap Sort}
     我们可以使用堆来优化选择排序，这样选出一个最值的时间复杂度可以降低到$O(\log n)$。
     \begin{itemize}
       \item 堆是一种数据结构。对于任意一个节点，其父节点的值大于等于(或小于等于)其子节点的值。
       \item 堆可以用数组来表示，对于节点$i$，其左儿子为$2i$，右儿子为$2i+1$，父节点为$i/2$。
-      \item 堆分为大顶堆和小顶堆。
+      \item 堆分为大顶堆和小顶堆，大根堆的根节点是最大的元素，小根堆的根节点是最小的元素。
       \item 堆是一棵完全二叉树，每一个节点的子树都是一个堆。
     \end{itemize}
   \end{frame}
@@ -230,7 +249,7 @@ void merge_sort(int l, int r) {
       \caption{Adjust Heap}
       \begin{algorithmic}[1]
         \STATE{$t = a[i]$}\COMMENT{下沉i节点}
-        \FOR[从左儿子到最后一个节点]{$j = 2 \times i$ to $n$}
+        \FOR{$j = 2 \times i$; $j \leq n$; $j = 2 \times i$}
           \IF[选择左右儿子中的较大的]{$j < n$ and $a[j] < a[j + 1]$}
             \STATE{$j++$}
           \ENDIF
@@ -244,7 +263,15 @@ void merge_sort(int l, int r) {
       \end{algorithmic}
     \end{algorithm}
   \end{frame}
+  \begin{frame}{动态中位数}
+    在我们学习了堆这一数据结构之后。我们可以使用对顶堆的思想来维护一个动态中位数。\newline
 
+    即我们维护两个堆，一个大根堆，一个小根堆。大根堆存储较小的一半元素，小根堆存储较大的一半元素。\newline
+
+    不过这在之前已经提到了，就不再赘述。
+  \end{frame}
+
+  \section{STL中的排序}
   \begin{frame}{std::sort in STL}
     \begin{block}{void sort(RandomIt first, RandomIt last, Compare comp);}
       这是std::sort的函数原型。其中RandomIt是一个随机访问迭代器，排序区间是左闭右开的；Compare是一个可调用对象，用于比较待排序的元素，默认为std::less<T>()。
@@ -296,14 +323,15 @@ std::sort(v.begin(), v.end(),
   \end{frame}
 
   \begin{frame}{严格弱序}
-    在这里我们需要注意的是：我们自定义的比较函数需要满足``严格弱序"，这是 \href{https://zh.cppreference.com/w/cpp/named_req/Compare}{STL} 所要求的。\newline
+    在这里我们需要注意的是：我们自定义的比较函数需要满足``严格弱序"，这是 \href{https://zh.cppreference.com/w/cpp/named_req/Compare}{STL} 所要求的。
 
-    严格弱序的定义如下：
-    \begin{itemize}
-      \item 反自反性：$!comp(a, a)$
-      \item 反对称性：$comp(a, b) \Rightarrow !comp(b, a)$
-      \item 传递性：$comp(a, b)$ \&\& $comp(b, c) \Rightarrow comp(a, c)$
-    \end{itemize}
+    \begin{block}{严格弱序的定义如下：}
+      \begin{itemize}
+        \item 反自反性：$!comp(a, a)$
+        \item 反对称性：$comp(a, b) \Rightarrow !comp(b, a)$
+        \item 传递性：$comp(a, b)$ \&\& $comp(b, c) \Rightarrow comp(a, c)$
+      \end{itemize}
+    \end{block}
 
     定义$equiv(a, b)$为$!comp(a, b)$ \&\& $!comp(b, a)$,若满足自反性,对称性,传递性,那么$comp$在$equiv$所确定的等价类上引入了一种严格全序。\newline
 
@@ -311,19 +339,20 @@ std::sort(v.begin(), v.end(),
   \end{frame}
 
   \begin{frame}[fragile]{去重}
-    对于一个有序的数组，我们很容易对其进行去重。\\当然STL也提供了对应的函数。
-
+    对于一个有序的数组，我们很容易对其进行去重。当然STL也提供了对应的函数，即std::unique。\\
     \begin{block}{去重}
       \begin{verbatim}
 std::vector<int> v;
 std::sort(v.begin(), v.end());
-v.erase(std::unique(v.begin(), v.end()), v.end());\end{verbatim}
-        这样就完成了对于数组v的去重操作。
+v.erase(std::unique(v.begin(), v.end()), v.end());
+// 这样就完成了对于数组v的去重操作。\end{verbatim}
     \end{block}
+    std::unique函数会将重复的元素放到数组的末尾，并返回一个指向第一个重复元素的迭代器，我们可以通过erase函数来删除这些重复元素。
   \end{frame}
 
   \begin{frame}{离散化}
-    离散化是一种将数据映射到连续的整数区间的方法。在一些问题中，我们需要将一些离散的数据映射到连续的整数区间，以便于我们进行操作。
+    离散化是一种将数据映射到连续的整数区间的方法。
+    在一些问题中，我们需要将一些离散的数据映射到连续的整数区间，以便于我们进行操作。
     \begin{itemize}
       \item 离散化的过程是将所有的数据放入一个数组中，然后对数组进行排序。
       \item 然后对于每一个数据，我们可以通过二分查找找到其在排序后的数组中的位置。
