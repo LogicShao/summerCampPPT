@@ -4,8 +4,8 @@ void quick_select(std::vector<int> &a, int l, int r, int k) {
     if (l >= r) return;
     int i = l - 1, j = r + 1, x = a[rand() % (r - l + 1) + l];
     while (i < j) {
-        do ++i; while (a[i] < x);
-        do --j; while (a[j] > x);
+        do ++i; while (a[i] > x);
+        do --j; while (a[j] < x);
         if (i < j) std::swap(a[i], a[j]);
     }
     if (j - l + 1 >= k) quick_select(a, l, j, k);
