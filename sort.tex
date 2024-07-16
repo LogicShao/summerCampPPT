@@ -99,7 +99,8 @@
     \begin{verbatim}
 void quick_sort(int l, int r) {
   if (l >= r) return;
-  int i = l - 1, j = r + 1, x = a[rand() % (r - l + 1) + l];
+  int i = l - 1, j = r + 1;
+  int x = a[rand() % (r - l + 1) + l];
   while (i < j) {
     do i++; while (a[i] < x);
     do j--; while (a[j] > x);
@@ -301,9 +302,10 @@ std::sort(v.begin(), v.end(),
     \begin{itemize}
       \item 反自反性：$!comp(a, a)$
       \item 反对称性：$comp(a, b) \Rightarrow !comp(b, a)$
-      \item 传递性：$comp(a, b) \&\& comp(b, c) \Rightarrow comp(a, c)$
+      \item 传递性：$comp(a, b)$ \&\& $comp(b, c) \Rightarrow comp(a, c)$
     \end{itemize}
-    定义equiv(a, b)为!comp(a, b) \&\& !comp(b, a)，则要满足自反性、对称性、传递性。\newline
+
+    定义$equiv(a, b)$为$!comp(a, b)$ \&\& $!comp(b, a)$,若满足自反性,对称性,传递性,那么$comp$在$equiv$所确定的等价类上引入了一种严格全序。\newline
 
     假如我们定义<为<=，那么我们就不满足严格弱序的定义，使用std::sort会出现未定义行为，可能会Runtime Error。
   \end{frame}

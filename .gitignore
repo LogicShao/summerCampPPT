@@ -8,6 +8,7 @@ tempCodeRunnerFile.py
 *.in
 *.zip
 *.txt
+*.exe
 
 ## Core latex/pdflatex auxiliary files:
 *.aux
