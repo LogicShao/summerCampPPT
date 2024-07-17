@@ -80,7 +80,7 @@
         \item C++ style: std::cout,std::endl,std::cerr
       \end{itemize}
     \end{block}
-    std::cerr是无缓冲的，而std::cout是行缓冲的。善用这一特性，对调试有很大帮助。
+    std::cerr是无缓冲的，而std::cout是行缓冲的。善用这一特性，对调试有很大帮助。注意：scanf读入std::string时需要提前分配内存。
   \end{frame}
   
   \section{字符串哈希}
@@ -98,7 +98,18 @@
   \end{frame}
 
   \begin{frame}{Hash on String}
-    简单来说，哈希可以帮助我们快速判断两个数据是否相等。这一思想亦可用于字符串。
+    简单来说，哈希可以帮助我们快速判断两个数据是否相等。这一思想亦可用于字符串。\newline
+
+    我们可以将字符串看做一个数，比如说
+    $$S = s_1 \times p^{n-1} + s_2 \times p^{n-2} + \cdots + s_n \times p^0$$
+
+    其中$p$是一个质数，$s_i$是字符串的第$i$个字符(我们让每一个字符对应一个整数即可)。这样我们就可以用一个数来表示一个字符串。这样的方法有很多好处，比如说我们可以用$O(1)$的时间复杂度来判断两个字符串是否相等。
+  \end{frame}
+
+  \begin{frame}{Hash on String}
+    不过，显然这样的方法有很多问题，比如说溢出，冲突问题。我们可以通过取模来解决溢出问题，但是冲突问题就没那么容易解决了。\newline
+
+
   \end{frame}
 
   \section{字典树}
