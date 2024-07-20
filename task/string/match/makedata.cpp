@@ -78,6 +78,7 @@ void make_small_data(int _case, int size, int score) {
     std::cerr << std::format("case {} finish\n", _case);
 }
 
+// 大数据保证出现次数不能过少
 void make_ensure_data(int _case, int size, int score) {
     // make data
     int T = SUM_CASE_SIZE / size;

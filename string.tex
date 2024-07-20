@@ -157,27 +157,15 @@
         \item 设 $f_{i}(s)=f(s[1\cdots i])$，那么我们预处理出 $f_{i}(s)$ 的值，是不是就可以在 $O(1)$ 的时间内求出 $f(s[l\cdots r])$ 的值了呢?
       \end{itemize}
     \end{block}
-  \end{frame}
 
-  \begin{frame}{String Hash}
-    根据定义，我们可以得到
-    $$f(s[1\cdots i])=s[1]\times{b^{i-1}}+s[2]\times{b^{i-2}}+\cdots+s[i]\times{b^{0}}$$
-
-    带入$(1\cdots r),(1\cdots l-1),(l\cdots r)$，我们可以得到
-    \begin{equation}
-      f(s[1\cdots r])=s[1]\times{b^{r-1}}+\cdots+s[l-1]\times{b^{r-l+1}}+\cdots+s[r]\times{b^{0}}
-    \end{equation}
-    
-    \begin{equation}
-      f(s[1\cdots l-1])=s[1]\times{b^{l-2}}+\cdots+s[l-1]\times{b^{0}}
-    \end{equation}
-    
-    \begin{equation}
-      f(s[l\cdots r])=s[l]\times{b^{r-l}}+s[l+1]\times{b^{r-l-1}}+\cdots+s[r]\times{b^{0}}
-    \end{equation}
-
-    于是我们可以得到$(3)=(1)-(2)\times{b^{r-l+1}}$，即
-    $$f(s[l\cdots r])=f(s[1\cdots r])-f(s[1\cdots l-1])\times{b^{r-l+1}}$$
+    \begin{block}{处理多次询问}
+      \begin{itemize}
+        \item 设 $f_{i}(s)=f(s[1..i])$，那么我们预处理出 $f_{i}(s)$ 的值，是不是就可以在 $O(1)$ 的时间内求出 $f(s[l..r])$ 的值了呢?
+        \item $f(s[1..i])=s[1]\times{b^{i-1}}+s[2]\times{b^{i-2}}+\cdots+s[i]\times{b^{0}}$
+        \item $f(s[l..r])=s[l]\times{b^{r-l}}+s[l+1]\times{b^{r-l-1}}+\cdots+s[r]\times{b^{0}}$
+        \item $f(s[l..r])=f_{r}(s)-f_{l-1}(s)\times{b^{r-l+1}}$
+      \end{itemize}
+    \end{block}
   \end{frame}
 
   \begin{frame}[fragile]{String Hash}
@@ -194,6 +182,38 @@ void init() {
     p[i] = p[i - 1] * P;
   }
 }\end{verbatim}
+    \end{block}
+  \end{frame}
+
+  \begin{frame}{字符串匹配}
+    给定一个字符串 $s$ 和一个模式串 $t$，求 $t$ 在 $s$ 中出现的次数。\newline
+
+    我们只需要求出 $s$ 和 $t$ 的哈希值，然后在 $s$ 中枚举 $t$ 的起点，然后用 $O(1)$ 的时间复杂度来判断是否匹配即可。
+  \end{frame}
+
+  \begin{frame}{判断回文串}
+    给定一个字符串 $s$，每次询问一个区间 $[l,r]$，判断 $s[l,r]$ 是否是回文串。\newline
+
+    同时求出前缀和与后缀和。后缀和用于求出反串的哈希值，前缀和用于求出 $s[l,r]$ 的哈希值。然后判断两者是否相等即可。
+  \end{frame}
+  
+  \begin{frame}{最长回文子串}
+    给定一个字符串 $s$，求它的最长回文子串。
+  
+    \begin{block}{二分答案做法}
+      \begin{itemize}
+        \item 对于一个回文中心来说，显然存在单调的性质：如果长度为 $x$ 的回文串存在，那么长度为 $x-1$ 的回文串也存在。
+        \item 因此我们可以二分答案，然后判断是否存在长度为 $x$ 的回文串。
+        \item 枚举中心，从两边开始缩小。
+        \item 需要注意的是，如果回文串长度为奇数，那么中心是一个字符，如果回文串长度为偶数，那么中心是两个字符。
+      \end{itemize}
+    \end{block}
+  \end{frame}
+
+  \begin{frame}{最长回文子串}
+    \begin{block}{$O(N)$ 哈希做法 (非Manacher做法)}
+      具体方法就是记 $R_i$ 表示以 $i$ 作为结尾的最长回文的长度，那么答案就是 
+      $\max_{i=1}^nR_i$。考虑到 $R_i\leq R_{i-1}+2$，因此我们只需要暴力从 $R_{i-1}+2$ 开始递减，直到找到第一个回文即可。假设每次开始遍历的区间为 $[l,i]$，显然每一个位置最多只会被 $l$ 扫描两次，因此时间复杂度为 $O(n)$。
     \end{block}
   \end{frame}
 
@@ -218,7 +238,8 @@ void insert(char str[]) { // 插入字符串
   int p = 0;
   for (int i = 0; str[i]; i++){
     int u = str[i] - 'a';
-    if (!son[p][u]) son[p][u] = ++ idx; // 不存在子节点就新建一个
+    // 不存在子节点就新建一个
+    if (!son[p][u]) son[p][u] = ++ idx;
     p = son[p][u]; // 转移到子节点
   }
   cnt[p] ++; // 以该节点结尾的字符串数量+1
@@ -239,17 +260,22 @@ int query(char str[]) { // 查询字符串出现次数
   \end{frame}
 
   \begin{frame}{检索字符串}
-    给定一个字符串，我们可以在字典树中检索这个字符串是否存在。
+    给定一个字符集合，查询某个字符串是否在集合中出现过。\newline
+
+    我们可以将字符串插入到字典树中，然后查询即可。
   \end{frame}
 
   \begin{frame}{最大异或值}
-    \begin{block}{题目}
-      给定一个长度为$n$的序列，求出序列中两个数的异或值最大的异或值。
-    \end{block}
+    给定一个长度为$n$的序列，求出序列中两个数的异或值最大的异或值。
+
     \begin{block}{思路}
+      我们的想法是维护一个字典树，然后对于每一个数，我们求出这个数可以与字典树中的哪一个数异或得到最大值。最后在这些答案中选取最大值即可。
+    \end{block}
+
+    \begin{block}{查询最大异或值}
       \begin{itemize}
-        \item 我们可以将每一个数看做一个二进制数，那么我们可以将每一个数插入到字典树中。
-        \item 我们可以从高位到低位依次贪心地选择最大的数。
+        \item 维护一颗二进制的字典树。
+        \item 从高位到低位依次贪心地选择最大的数。
         \item 如果当前位为1，那么我们就尽量选择0，否则选择1。
         \item 如果当前位为0，那么我们就尽量选择1，否则选择0。
       \end{itemize}

@@ -35,6 +35,7 @@ namespace solver {
                 p = son[p][u];
             }
             int res = cnt[p];
+            if (res == 0) return 0;
             cnt[p] = -1;
             return res;
         }
@@ -159,7 +160,7 @@ void wirte_info() {
 void createTask() {
     for (int i = 0; i < CASE_NUM; ++i) {
         std::cerr << std::format("make test {}/{}\n", i, CASE_NUM);
-        make_data(i, CASE_SIZE[i], 1);
+        make_data(i, CASE_SIZE[i], 2);
     }
     wirte_info();
 }
