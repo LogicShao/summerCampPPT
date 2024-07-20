@@ -100,21 +100,160 @@
   \begin{frame}{Hash on String}
     简单来说，哈希可以帮助我们快速判断两个数据是否相等。这一思想亦可用于字符串。\newline
 
-    我们可以将字符串看做一个数，比如说
+    我们可以将字符串看做一个$p$进制数，比如说
     $$S = s_1 \times p^{n-1} + s_2 \times p^{n-2} + \cdots + s_n \times p^0$$
 
     其中$p$是一个质数，$s_i$是字符串的第$i$个字符(我们让每一个字符对应一个整数即可)。这样我们就可以用一个数来表示一个字符串。这样的方法有很多好处，比如说我们可以用$O(1)$的时间复杂度来判断两个字符串是否相等。
   \end{frame}
 
   \begin{frame}{Hash on String}
-    不过，显然这样的方法有很多问题，比如说溢出，冲突问题。我们可以通过取模来解决溢出问题，但是冲突问题就没那么容易解决了。\newline
+    不过，显然这样的方法有很多问题，比如说溢出和冲突问题。我们可以通过取模来解决溢出问题，也就是
+    $$f(s)=\sum_{i=1}^{len}{s[i]\times{p^{len-i}}}\mod M$$
 
+    \begin{block}{错误率分析}
+      假设 $f(x)$ 将 $N$ 个字符串映射到 $M$ 个位置上,不碰撞的概率为 $\Pi_{i=0}^{n-1}{\frac{M-i}{M}}$\newline
+      当 $N=10^6,M=10^9+7$ 时，这个值大概是 $6.0\times10^{-218}$
+    \end{block}
+  
+    这样的话几乎一定会冲突。那么要如何解决冲突?
+  \end{frame}
 
+  \begin{frame}{How to avoid conflict}
+    \begin{block}{大素数}
+      \begin{itemize}
+        \item 冲突容易发生的原因在于 M 选取的太小了
+        \item 假如我们选取一个 $10^{18}$ 数量级的素数，那么冲突的概率就会小很多
+        \item 问题在于大素数的判断
+        \item 我们可以使用 Miller-Rabin 算法快速判断
+      \end{itemize}
+    \end{block}
+  
+    \begin{block}{双模数}
+      \begin{itemize}
+        \item 如果你不会 Miller-Rabin, 可以使用双模数
+        \item 对两个大质数(1e9+7,1e9+9)分别取模，值域扩大到两者之积
+        \item 这时正确率大概是 $0.9999995000005012$
+        \item 双模数的问题在于常数比较大
+      \end{itemize}
+    \end{block}
+  \end{frame}
+  
+  \begin{frame}{How to avoid conflict}
+    \begin{block}{trick}
+      \begin{itemize}
+        \item 有时候我们可以取巧, 用溢出代替取模
+        \item 我们可以使用 unsigned long long
+        \item 这样自然溢出即是对 $2^{64}$ 取模
+        \item 但是这样的话, 会有一定的错误率
+        \item 如果出题人没卡数据, 那么这样的方法是可以接受的
+      \end{itemize}
+    \end{block}
+  \end{frame}
+
+  \begin{frame}{String Hash}
+    \begin{block}{思考}
+      \begin{itemize}
+        \item 如何处理多次询问?前缀和!
+        \item 设 $f_{i}(s)=f(s[1\cdots i])$，那么我们预处理出 $f_{i}(s)$ 的值，是不是就可以在 $O(1)$ 的时间内求出 $f(s[l\cdots r])$ 的值了呢?
+      \end{itemize}
+    \end{block}
+  \end{frame}
+
+  \begin{frame}{String Hash}
+    根据定义，我们可以得到
+    $$f(s[1\cdots i])=s[1]\times{b^{i-1}}+s[2]\times{b^{i-2}}+\cdots+s[i]\times{b^{0}}$$
+
+    带入$(1\cdots r),(1\cdots l-1),(l\cdots r)$，我们可以得到
+    \begin{equation}
+      f(s[1\cdots r])=s[1]\times{b^{r-1}}+\cdots+s[l-1]\times{b^{r-l+1}}+\cdots+s[r]\times{b^{0}}
+    \end{equation}
+    
+    \begin{equation}
+      f(s[1\cdots l-1])=s[1]\times{b^{l-2}}+\cdots+s[l-1]\times{b^{0}}
+    \end{equation}
+    
+    \begin{equation}
+      f(s[l\cdots r])=s[l]\times{b^{r-l}}+s[l+1]\times{b^{r-l-1}}+\cdots+s[r]\times{b^{0}}
+    \end{equation}
+
+    于是我们可以得到$(3)=(1)-(2)\times{b^{r-l+1}}$，即
+    $$f(s[l\cdots r])=f(s[1\cdots r])-f(s[1\cdots l-1])\times{b^{r-l+1}}$$
+  \end{frame}
+
+  \begin{frame}[fragile]{String Hash}
+    所以只要预处理 $b^i$ 就可以 $O(1)$ 查询了!
+    \begin{block}{template}
+      \begin{verbatim}
+using u = unsigned long long;
+u n, h[N], p[N]; char str[N]; u P = 131;
+u f(int l, int r){return h[r] - h[l-1] * p[r-l+1];} 
+void init() {
+  p[0] = 1;
+  for(int i = 1; i <= n; ++ i) {
+    h[i] = h[i - 1] * P + str[i];
+    p[i] = p[i - 1] * P;
+  }
+}\end{verbatim}
+    \end{block}
   \end{frame}
 
   \section{字典树}
   \begin{frame}{什么是字典树}
-    pass
+    字典树，英文名 trie。顾名思义，就是一个像字典一样的树。
+    % 插入图片
+    \begin{figure}
+      \centering
+      \includegraphics[height=5cm]{./images/trie1.png}
+      \caption{字典树}
+    \end{figure}
+  \end{frame}
+
+  \begin{frame}[fragile]{template}
+    \begin{verbatim}
+const int M = 1e6 + 10;
+// son[i][c]表示第i个节点的第c个儿子 对应字符c的边
+// cnt[i]表示以第i个节点结尾的字符串数量
+int son[M][26], cnt[M], idx;
+void insert(char str[]) { // 插入字符串
+  int p = 0;
+  for (int i = 0; str[i]; i++){
+    int u = str[i] - 'a';
+    if (!son[p][u]) son[p][u] = ++ idx; // 不存在子节点就新建一个
+    p = son[p][u]; // 转移到子节点
+  }
+  cnt[p] ++; // 以该节点结尾的字符串数量+1
+}\end{verbatim}
+  \end{frame}
+
+  \begin{frame}[fragile]{template}
+    \begin{verbatim}
+int query(char str[]) { // 查询字符串出现次数
+  int p = 0;
+  for (int i = 0; str[i]; i++) {
+    int u = str[i] - 'a';
+    if (!son[p][u]) return 0; // 不存在
+    p = son[p][u]; // 转移到子节点
+  }
+  return cnt[p];
+}\end{verbatim}
+  \end{frame}
+
+  \begin{frame}{检索字符串}
+    给定一个字符串，我们可以在字典树中检索这个字符串是否存在。
+  \end{frame}
+
+  \begin{frame}{最大异或值}
+    \begin{block}{题目}
+      给定一个长度为$n$的序列，求出序列中两个数的异或值最大的异或值。
+    \end{block}
+    \begin{block}{思路}
+      \begin{itemize}
+        \item 我们可以将每一个数看做一个二进制数，那么我们可以将每一个数插入到字典树中。
+        \item 我们可以从高位到低位依次贪心地选择最大的数。
+        \item 如果当前位为1，那么我们就尽量选择0，否则选择1。
+        \item 如果当前位为0，那么我们就尽量选择1，否则选择0。
+      \end{itemize}
+    \end{block}
   \end{frame}
 
   \begin{frame} % 结束页

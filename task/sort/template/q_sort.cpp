@@ -18,6 +18,22 @@ void q_sort(int l,int r) {
     q_sort(j + 1, r);
 }
 
+void quick_sort(int l, int r) {
+    if (l >= r) return;
+    int x = q[(l + r) / 2], i = l, j = r;
+    while (i <= j) {
+        while (q[i] < x) i++;
+        while (q[j] > x) j--;
+        if (i <= j) {
+            swap(q[i], q[j]);
+            i++;
+            j--;
+        }
+    }
+    quick_sort(l, j);
+    quick_sort(i, r);
+}
+
 int main() {
     scanf("%d", &n);
     for(int i = 1; i <= n; i++) scanf("%d", &q[i]);
