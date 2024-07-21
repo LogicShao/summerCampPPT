@@ -30,7 +30,6 @@ int query(char str[])
         p = son[p][u];
     }
     int res = cnt[p];
-    if (res == 0) return 0;
     cnt[p] = -1;
     return res;
 }

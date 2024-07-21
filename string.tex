@@ -82,6 +82,14 @@
     \end{block}
     std::cerr是无缓冲的，而std::cout是行缓冲的。善用这一特性，对调试有很大帮助。注意：scanf读入std::string时需要提前分配内存。
   \end{frame}
+
+  \begin{frame}{tips}
+    值得注意的是，在 C++20 中，操作符 \texttt{operator>>(istream\&, char*)} 被弃用，因为它可能导致缓冲区溢出。\newline
+
+    但是，操作符 \texttt{operator>>(istream\&in, char(\&\_\_s)[N])} 仍然是安全的，因为它会自动计算数组的大小。\newline
+    
+    请不要把数组和退化成的指针搞混。数组暗含了它的大小，而指针没有。
+  \end{frame}
   
   \section{字符串哈希}
   \begin{frame}{What is Hash}
@@ -213,7 +221,7 @@ void init() {
   \begin{frame}{最长回文子串}
     \begin{block}{$O(N)$ 哈希做法 (非Manacher做法)}
       具体方法就是记 $R_i$ 表示以 $i$ 作为结尾的最长回文的长度，那么答案就是 
-      $\max_{i=1}^nR_i$。考虑到 $R_i\leq R_{i-1}+2$，因此我们只需要暴力从 $R_{i-1}+2$ 开始递减，直到找到第一个回文即可。假设每次开始遍历的区间为 $[l,i]$，显然每一个位置最多只会被 $l$ 扫描两次，因此时间复杂度为 $O(n)$。
+      $\max_{i=1}^nR_i$。注意到 $R_i\leq R_{i-1}+2$，因此我们只需要暴力从 $R_{i-1}+2$ 开始递减，直到找到第一个回文即可。假设每次开始遍历的区间为 $[l,i]$，显然每一个位置最多只会被 $l$ 扫描两次，因此时间复杂度为 $O(n)$。
     \end{block}
   \end{frame}
 

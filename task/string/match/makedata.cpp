@@ -35,10 +35,9 @@ std::string make_case(int n) {
 }
 
 std::string ensure_case(int n) {
-    int m = std::uniform_int_distribution<int>(1, n)(rnd);
     int range = std::uniform_int_distribution<int>(1, 5)(rnd);
-    // 尝试构造 S 使得 T 在 S 中出现 cnt 次
-    // m 为 range 的倍数
+    int m = std::uniform_int_distribution<int>(range, n)(rnd);
+    // 尝试构造 S 使得 T 在 S 中出现若干次
     std::string period = makeRandString(range, range);
     m = m / range * range;
     std::string T = period;
