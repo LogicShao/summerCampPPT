@@ -73,14 +73,28 @@
         \item C++ style: std::cin,std::getline
       \end{itemize}
     \end{block}
-    对于单一的一个字符，也建议使用字符数组或者std::string读入(因为字符串的读入会跳过空白符)。
+    对于单一的一个字符，也建议使用字符数组或者std::string读入(因为字符串的读入会跳过空白符,否则可能读入空白符)。
     \begin{block}{输出}
       \begin{itemize}
         \item C style: printf,putchar,puts
         \item C++ style: std::cout,std::endl,std::cerr
       \end{itemize}
     \end{block}
-    std::cerr是无缓冲的，而std::cout是行缓冲的。善用这一特性，对调试有很大帮助。注意：scanf读入std::string时需要提前分配内存。
+    std::cerr对应标准错误流，std::cout对应标准输出流。在OJ判题的时候，std::cerr的输出会被忽略。同时，std::cerr是无缓冲的，从而可以用来输出调试信息。
+  \end{frame}
+
+  \begin{frame}[fragile]{Input}
+    \begin{verbatim}
+// 使用scanf读入字符串需要提前分配空间
+std::string s(100);
+scanf("%s", &s[0]);
+// 使用std::cin读入字符串不需要提前分配空间
+std::string s;
+std::cin >> s; 
+std::getline(std::cin, s); // 读入到换行符为止
+
+// 注意在 std::cin >> s 之后使用
+// std::getline(std::cin, s) 时需要先把换行符读掉\end{verbatim}
   \end{frame}
 
   \begin{frame}{tips}
@@ -105,6 +119,21 @@
     简单来说，我们让一个非常大的值域映射到一个比较小的值域，尽可能降低冲突的概率，这就是哈希。
   \end{frame}
 
+  \begin{frame}{Hash table}
+    哈希表是一种数据结构，它可以提供快速的插入、删除和查找操作。哈希表的核心思想是将键映射到表中的一个位置。这个位置通常通过哈希函数计算得到。
+
+    \begin{block}{核心要素}
+      \begin{itemize}
+        \item 哈希函数: 将键映射到表中的一个位置。
+        \item 判等函数: 判断两个键是否相等。
+        \item 冲突处理: 处理两个不同的键映射到同一个位置的情况。
+      \end{itemize}
+      哈希表的时间复杂度通常是$O(1)$。缺点是容易被特殊数据攻击，导致时间复杂度退化为$O(n)$。
+    \end{block}
+
+    哈希表的实现有很多种，比如说链地址法、开放寻址法。这里我们主要介绍字符串哈希，也就是将字符串映射到一个数上。
+  \end{frame}
+
   \begin{frame}{Hash on String}
     简单来说，哈希可以帮助我们快速判断两个数据是否相等。这一思想亦可用于字符串。\newline
 
@@ -118,7 +147,7 @@
     不过，显然这样的方法有很多问题，比如说溢出和冲突问题。我们可以通过取模来解决溢出问题，也就是
     $$f(s)=\sum_{i=1}^{len}{s[i]\times{p^{len-i}}}\mod M$$
 
-    \begin{block}{错误率分析}
+    \begin{block}{冲突分析}
       假设 $f(x)$ 将 $N$ 个字符串映射到 $M$ 个位置上,不碰撞的概率为 $\Pi_{i=0}^{n-1}{\frac{M-i}{M}}$\newline
       当 $N=10^6,M=10^9+7$ 时，这个值大概是 $6.0\times10^{-218}$
     \end{block}
@@ -225,6 +254,12 @@ void init() {
     \end{block}
   \end{frame}
 
+  \begin{frame}{小结}
+    对于上面的很多问题，都有比哈希更优的解法。但是哈希的优势在于它的通用性。如果涉及到字符串的比较，哈希是一个非常好的选择。\newline
+
+    如果我们只掌握哈希，不知道其他方法，那么我们同样可以用哈希来解决很多问题。我们不需要很精妙的算法，只需要比较暴力的方法就可以解决很多问题。
+  \end{frame}
+
   \section{字典树}
   \begin{frame}{什么是字典树}
     字典树，英文名 trie。顾名思义，就是一个像字典一样的树。
@@ -288,6 +323,27 @@ int query(char str[]) { // 查询字符串出现次数
         \item 如果当前位为0，那么我们就尽量选择1，否则选择0。
       \end{itemize}
     \end{block}
+  \end{frame}
+
+  \begin{frame}{小结}
+    今天我们学习了字符串的基础知识，包括
+    \begin{itemize}
+      \item 字符串的读入与输出
+      \item 字符串哈希的基础知识
+      \item 哈希判断回文串
+      \item 哈希实现字符串匹配
+      \item 字典树的基础操作
+      \item 字典树在最大异或值中的应用
+    \end{itemize}
+    希望大家能够掌握这些知识，加油!
+  \end{frame}
+
+  \begin{frame}{关于题目数据}
+    随机数据有一个非常重要的特点：两个字符串几乎是不可能相同的。因此有时候暴力的效率反而非常高(因为答案几乎是0,或者比较小的数字)。\newline
+
+    第一次出题显然低估了出数据的难度。所以之前有修改过数据。因为没有特殊构造把暴力卡掉，所以前几天一直在修数据(有几道题标程和makedata都是错的orz)。这里感到抱歉。\newline
+
+    std.cpp和makedata.cpp均在 \href{https://github.com/LogicShao/summerCampPPT/}{\emph{github}} 开源。
   \end{frame}
 
   \begin{frame} % 结束页

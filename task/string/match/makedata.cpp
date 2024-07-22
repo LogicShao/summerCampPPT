@@ -50,7 +50,7 @@ std::string ensure_case(int n) {
         S += period;
     }
     return std::format("{} {}\n{}\n{}\n", n, m, S, T);
-};
+}
 
 // 随机数据 没有特殊处理
 void make_small_data(int _case, int size, int score) {
