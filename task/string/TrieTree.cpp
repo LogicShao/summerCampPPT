@@ -18,7 +18,7 @@ struct TrieTree {
 
     void clear(int size) { // 初始化字典树
         // 如果有多组测试数据，需要清空字典树
-        // 但是不能每次都清空，否则会超时
+        // 但是不能每次全部清空，否则会超时
         // size 是字典树的节点数
         memset(son, 0, size * sizeof(son[0]));
         memset(cnt, 0, size * sizeof(cnt[0]));

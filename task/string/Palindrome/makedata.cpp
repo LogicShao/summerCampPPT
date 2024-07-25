@@ -46,7 +46,7 @@ std::string makeRandString(int n) { // 1-indexed
     for (int i = l; i <= (l + r) / 2; ++i) {
         res[i] = res[r - i + l];
     }
-    return res;
+    return res.substr(1);
 }
 
 std::string make_same_string(int n) {
@@ -60,7 +60,7 @@ std::string make_same_string(int n) {
         int idx = std::uniform_int_distribution<int>(1, n)(rnd);
         res[idx] = char_set[rnd() % char_set.size()];
     }
-    return res;
+    return res.substr(1);
 }
 
 void hack_bf(int _case, int n, int score) {
