@@ -38,8 +38,8 @@ struct strHashImpl { // 单模数哈希
     void init(const std::string &s) { // 下标从 0 开始
         // 初始化: 计算正向哈希值
         n = s.size();
-        h[1] = s[0];
-        for (int i = 0; i < n; ++ i) {
+        h[0] = 0;
+        for (int i = 1; i <= n; ++ i) {
             h[i] = (1LL * h[i - 1] * base % mod + s[i - 1]) % mod;
         }
 
@@ -122,8 +122,7 @@ struct strHashImpl2 { // 自然溢出哈希
     void init(const std::string &s) { // 下标从 0 开始
         // 初始化: 计算正向哈希值
         n = s.size();
-        h[1] = s[0];
-        for (int i = 0; i < n; ++ i) {
+        for (int i = 1; i <= n; ++ i) {
             h[i] = h[i - 1] * base + s[i - 1];
         }
 
@@ -228,8 +227,7 @@ struct strHashImpl3 { // 单模数哈希
 
     void init(const std::string &s) {
         n = s.size();
-        h[1] = s[0];
-        for (int i = 0; i < n; ++ i) {
+        for (int i = 1; i <= n; ++ i) {
             h[i] = (i128)h[i - 1] * base % mod;
             h[i] = ((i128)h[i] + s[i - 1]) % mod;
         }
